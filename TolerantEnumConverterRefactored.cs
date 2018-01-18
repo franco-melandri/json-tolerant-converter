@@ -27,26 +27,23 @@ namespace TolerantConverter
         {
             InitMap(objectType);
 
-            var enumText = reader.Value.ToString();
-            var val = FromValue(objectType, enumText);
+            return FromValue(objectType, 
+                             reader.Value.ToString(),
+                             (value) => value,
+                             () => {
+                                var mydefault = GetDefaultValue(objectType);
+                                var names = Enum.GetNames(objectType);
 
-            System.Console.Error.WriteLine("val--------------> {0}", val );
-            if (val != null)
-                return val;
+                                var unknownName = names
+                                    .FirstOrDefault(n => string.Equals(n, Enum.GetName(objectType, mydefault), StringComparison.OrdinalIgnoreCase));
 
-            var mydefault = GetDefaultValue(objectType);
-                System.Console.Error.WriteLine("default--------------> {0}", mydefault );
+                                if (unknownName == null)
+                                    throw new JsonSerializationException(string.Format("Unable to parse '{0}' to enum {1}. Consider adding Unknown as fail-back value.", reader.Value,
+                                        objectType));
 
-            var names = Enum.GetNames(objectType);
+                                return Enum.Parse(objectType, unknownName);
+                             });
 
-            var unknownName = names
-                .FirstOrDefault(n => string.Equals(n, Enum.GetName(objectType, mydefault), StringComparison.OrdinalIgnoreCase));
-
-            if (unknownName == null)
-                throw new JsonSerializationException(string.Format("Unable to parse '{0}' to enum {1}. Consider adding Unknown as fail-back value.", reader.Value,
-                    objectType));
-
-            return Enum.Parse(objectType, unknownName);
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
@@ -58,17 +55,19 @@ namespace TolerantConverter
         {
             if (_fromMap != null)
                 return;
-
+            
             _fromMap = new Dictionary<string, object>(StringComparer.InvariantCultureIgnoreCase);
-
-            var fields = enumType.GetFields(BindingFlags.Static | BindingFlags.Public);
-            foreach (var field in fields)
-                _fromMap[field.GetEnumKey()] = Enum.Parse(enumType, field.Name);
+            enumType
+                .GetFields(BindingFlags.Static | BindingFlags.Public)
+                .ToList()
+                .ForEach(field => _fromMap[field.GetEnumKey()] = Enum.Parse(enumType, field.Name));
         }
 
-        private object FromValue(Type enumType, string value)
+        private object FromValue(Type enumType, string value, Func<object, object> some, Func<object> none)
         {
-            return !_fromMap.ContainsKey(value) ? null : _fromMap[value];
+            return !_fromMap.ContainsKey(value) ? 
+                        none(): 
+                        some(_fromMap[value]);
         }
     }
 
