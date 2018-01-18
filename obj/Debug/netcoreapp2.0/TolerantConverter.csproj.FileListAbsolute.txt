@@ -1,0 +1,13 @@
+/Users/melandrif/Projects/spykes/json-tolerant-converter/bin/Debug/netcoreapp2.0/NUnit3.TestAdapter.dll
+/Users/melandrif/Projects/spykes/json-tolerant-converter/bin/Debug/netcoreapp2.0/nunit.engine.netstandard.dll
+/Users/melandrif/Projects/spykes/json-tolerant-converter/bin/Debug/netcoreapp2.0/Mono.Cecil.dll
+/Users/melandrif/Projects/spykes/json-tolerant-converter/bin/Debug/netcoreapp2.0/TolerantConverter.deps.json
+/Users/melandrif/Projects/spykes/json-tolerant-converter/bin/Debug/netcoreapp2.0/TolerantConverter.runtimeconfig.json
+/Users/melandrif/Projects/spykes/json-tolerant-converter/bin/Debug/netcoreapp2.0/TolerantConverter.runtimeconfig.dev.json
+/Users/melandrif/Projects/spykes/json-tolerant-converter/bin/Debug/netcoreapp2.0/TolerantConverter.dll
+/Users/melandrif/Projects/spykes/json-tolerant-converter/bin/Debug/netcoreapp2.0/TolerantConverter.pdb
+/Users/melandrif/Projects/spykes/json-tolerant-converter/obj/Debug/netcoreapp2.0/TolerantConverter.csproj.CoreCompileInputs.cache
+/Users/melandrif/Projects/spykes/json-tolerant-converter/obj/Debug/netcoreapp2.0/TolerantConverter.AssemblyInfoInputs.cache
+/Users/melandrif/Projects/spykes/json-tolerant-converter/obj/Debug/netcoreapp2.0/TolerantConverter.AssemblyInfo.cs
+/Users/melandrif/Projects/spykes/json-tolerant-converter/obj/Debug/netcoreapp2.0/TolerantConverter.dll
+/Users/melandrif/Projects/spykes/json-tolerant-converter/obj/Debug/netcoreapp2.0/TolerantConverter.pdb
