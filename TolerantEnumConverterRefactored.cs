@@ -22,38 +22,33 @@ namespace TolerantConverter
 
         public override bool CanConvert(Type objectType)
         {
-            var type = IsNullableType(objectType) ? Nullable.GetUnderlyingType(objectType) : objectType;
-            return type != null && type.IsEnum;
+            return objectType != null && objectType.IsEnum;
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            var isNullable = IsNullableType(objectType);
-            var enumType = isNullable ? Nullable.GetUnderlyingType(objectType) : objectType;
-
-            InitMap(enumType);
+            InitMap(objectType);
 
             var enumText = reader.Value.ToString();
-            var val = FromValue(enumType, enumText);
+            var val = FromValue(objectType, enumText);
 
             System.Console.Error.WriteLine("val--------------> {0}", val );
             if (val != null)
                 return val;
 
-            if (isNullable) return null;
-            var mydefault = GetDefaultValue(enumType);
+            var mydefault = GetDefaultValue(objectType);
                 System.Console.Error.WriteLine("default--------------> {0}", mydefault );
 
-            var names = Enum.GetNames(enumType);
+            var names = Enum.GetNames(objectType);
 
             var unknownName = names
-                .FirstOrDefault(n => string.Equals(n, Enum.GetName(enumType, mydefault), StringComparison.OrdinalIgnoreCase));
+                .FirstOrDefault(n => string.Equals(n, Enum.GetName(objectType, mydefault), StringComparison.OrdinalIgnoreCase));
 
             if (unknownName == null)
                 throw new JsonSerializationException(string.Format("Unable to parse '{0}' to enum {1}. Consider adding Unknown as fail-back value.", reader.Value,
-                    enumType));
+                    objectType));
 
-            return Enum.Parse(enumType, unknownName);
+            return Enum.Parse(objectType, unknownName);
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
