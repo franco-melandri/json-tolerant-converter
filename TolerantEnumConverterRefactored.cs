@@ -67,27 +67,27 @@ namespace TolerantConverter
             _fromMap = new Dictionary<string, object>(StringComparer.InvariantCultureIgnoreCase);
 
             var fields = enumType.GetFields(BindingFlags.Static | BindingFlags.Public);
-
             foreach (var field in fields)
             {
-                var name = field.Name;
-                var enumValue = Enum.Parse(enumType, name);
-
-                // use EnumMember attribute if exists
-                var enumMemberAttribute = field.GetCustomAttribute<EnumMemberAttribute>();
-
-                if (enumMemberAttribute != null)
-                {
-                    var enumMemberValue = enumMemberAttribute.Value;
-                    _fromMap[enumMemberValue] = enumValue;
-                }
-                _fromMap[name] = enumValue;
+                var key = field.GetEnumKey();
+                _fromMap[key] = Enum.Parse(enumType, field.Name);
             }
         }
 
         private object FromValue(Type enumType, string value)
         {
             return !_fromMap.ContainsKey(value) ? null : _fromMap[value];
+        }
+    }
+
+    public static class FieldInfoExtension 
+    {
+        public static string GetEnumKey(this FieldInfo field)
+        {
+            var enumMemberAttribute = field.GetCustomAttribute<EnumMemberAttribute>();
+            return enumMemberAttribute != null ?
+                    enumMemberAttribute.Value :
+                    field.Name;         
         }
     }
 }
