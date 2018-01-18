@@ -12,7 +12,6 @@ namespace TolerantConverter
 {
     public class TolerantEnumConverterRefactored : JsonConverter
     {
-
         public static object GetDefaultValue(Type type) {
             return type.IsValueType ? Activator.CreateInstance(type) : null;
         }
@@ -34,23 +33,12 @@ namespace TolerantConverter
 
             InitMap(enumType);
 
-            if (reader.TokenType == JsonToken.String)
-            {
-                var enumText = reader.Value.ToString();
+            var enumText = reader.Value.ToString();
+            var val = FromValue(enumType, enumText);
 
-                var val = FromValue(enumType, enumText);
-
-                System.Console.Error.WriteLine("val--------------> {0}", val );
-                if (val != null)
-                    return val;
-            }
-            else if (reader.TokenType == JsonToken.Integer)
-            {
-                var enumVal = Convert.ToInt32(reader.Value);
-
-                var values = (int[]) Enum.GetValues(enumType);
-                if (values.Contains(enumVal)) return Enum.Parse(enumType, enumVal.ToString());
-            }
+            System.Console.Error.WriteLine("val--------------> {0}", val );
+            if (val != null)
+                return val;
 
             if (isNullable) return null;
             var mydefault = GetDefaultValue(enumType);
@@ -70,13 +58,7 @@ namespace TolerantConverter
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            var enumType = value.GetType();
-
-            InitMap(enumType);
-
-            var val = ToValue(enumType, value);
-
-            writer.WriteValue(val);
+            throw new NotImplementedException();
         }
 
         private static bool IsNullableType(Type t)
