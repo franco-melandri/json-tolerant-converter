@@ -6,13 +6,13 @@ namespace TolerantConverter
 {
    public class CmComponentModel
     {
-        [JsonProperty(ItemConverterType = typeof(TolerantEnumConverterRefactored))]
+        [JsonProperty(ItemConverterType = typeof(TolerantEnumConverterRefactored<CmType>))]
         // [JsonProperty(ItemConverterType = typeof(TolerantEnumConverter))]
         public CmType Type { get; set; }
     }
     
  
-    [JsonConverter(typeof(TolerantEnumConverterRefactored))]
+    [JsonConverter(typeof(TolerantEnumConverterRefactored<CmType>))]
     // [JsonConverter(typeof(TolerantEnumConverter))]
     [DefaultValue(UnknownComponent)]
     public enum CmType

@@ -10,15 +10,13 @@ using System.Runtime.Serialization;
 
 namespace TolerantConverter
 {
-    public class TolerantEnumConverterRefactored : JsonConverter
+    public class TolerantEnumConverterRefactored<T> : JsonConverter
     {
         public static object GetDefaultValue(Type type) {
             return type.IsValueType ? Activator.CreateInstance(type) : null;
         }
 
-        private Dictionary<Type, Dictionary<string, object>> _fromValueMap; // string representation to Enum value map
-
-        private Dictionary<Type, Dictionary<object, string>> _toValueMap; // Enum value to string map
+        private Dictionary<string, object> _fromMap;
 
         public override bool CanConvert(Type objectType)
         {
@@ -63,17 +61,10 @@ namespace TolerantConverter
 
         private void InitMap(Type enumType)
         {
-            if (_fromValueMap == null)
-                _fromValueMap = new Dictionary<Type, Dictionary<string, object>>();
+            if (_fromMap != null)
+                return;
 
-            if (_toValueMap == null)
-                _toValueMap = new Dictionary<Type, Dictionary<object, string>>();
-
-            if (_fromValueMap.ContainsKey(enumType))
-                return; // already initialized
-
-            var fromMap = new Dictionary<string, object>(StringComparer.InvariantCultureIgnoreCase);
-            var toMap = new Dictionary<object, string>();
+            _fromMap = new Dictionary<string, object>(StringComparer.InvariantCultureIgnoreCase);
 
             var fields = enumType.GetFields(BindingFlags.Static | BindingFlags.Public);
 
@@ -88,34 +79,15 @@ namespace TolerantConverter
                 if (enumMemberAttribute != null)
                 {
                     var enumMemberValue = enumMemberAttribute.Value;
-
-                    fromMap[enumMemberValue] = enumValue;
-                    toMap[enumValue] = enumMemberValue;
+                    _fromMap[enumMemberValue] = enumValue;
                 }
-                else
-                {
-                    toMap[enumValue] = name;
-                }
-
-                fromMap[name] = enumValue;
+                _fromMap[name] = enumValue;
             }
-
-            _fromValueMap[enumType] = fromMap;
-            _toValueMap[enumType] = toMap;
-        }
-
-        private string ToValue(Type enumType, object obj)
-        {
-            var map = _toValueMap[enumType];
-
-            return map[obj];
         }
 
         private object FromValue(Type enumType, string value)
         {
-            var map = _fromValueMap[enumType];
-
-            return !map.ContainsKey(value) ? null : map[value];
+            return !_fromMap.ContainsKey(value) ? null : _fromMap[value];
         }
     }
 }
