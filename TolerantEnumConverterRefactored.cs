@@ -53,12 +53,7 @@ namespace TolerantConverter
         {
             throw new NotImplementedException();
         }
-
-        private static bool IsNullableType(Type t)
-        {
-            return t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Nullable<>);
-        }
-
+    
         private void InitMap(Type enumType)
         {
             if (_fromMap != null)
@@ -68,10 +63,7 @@ namespace TolerantConverter
 
             var fields = enumType.GetFields(BindingFlags.Static | BindingFlags.Public);
             foreach (var field in fields)
-            {
-                var key = field.GetEnumKey();
-                _fromMap[key] = Enum.Parse(enumType, field.Name);
-            }
+                _fromMap[field.GetEnumKey()] = Enum.Parse(enumType, field.Name);
         }
 
         private object FromValue(Type enumType, string value)
