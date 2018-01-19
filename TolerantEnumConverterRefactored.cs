@@ -27,8 +27,7 @@ namespace TolerantConverter
         {
             InitMap(objectType);
 
-            return FromValue(objectType, 
-                             reader.Value.ToString(),
+            return FromValue(reader.Value.ToString(),
                              (value) => value,
                              () => {
                                 var mydefault = GetDefaultValue(objectType);
@@ -63,11 +62,11 @@ namespace TolerantConverter
                 .ForEach(field => _fromMap[field.GetEnumKey()] = Enum.Parse(enumType, field.Name));
         }
 
-        private object FromValue(Type enumType, string value, Func<object, object> some, Func<object> none)
+        private object FromValue(string value, Func<object, object> some, Func<object> none)
         {
-            return !_fromMap.ContainsKey(value) ? 
-                        none(): 
-                        some(_fromMap[value]);
+            return _fromMap.ContainsKey(value) ? 
+                        some(_fromMap[value]) :
+                        none();
         }
     }
 
