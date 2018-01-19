@@ -10,13 +10,14 @@ namespace TolerantConverter
         public const string Augmentedcategory = "augmentedCategory";
         public const string Picture = "image";
 
-        public static readonly Dictionary<string, Func<CmComponentModel>> ModelsDictionary =
-            new Dictionary<string, Func<CmComponentModel>>(StringComparer.OrdinalIgnoreCase)
+        public static readonly Dictionary<Func<string, bool>, Func<CmComponentModel>> ModelsDictionary =
+            new Dictionary<Func<string, bool>, Func<CmComponentModel>>
             {
-                {Collection, () => new CmCollectionModel()}
-                // {Ofsteaser, () => new CmOfsTeaserModel()},
-                // {Augmentedcategory, () => new AugmentedCategoryModel()},
-                // {Picture, () => new CmPictureModel()}
+                { selector => string.Equals(selector, Collection, StringComparison.OrdinalIgnoreCase), () => new CmCollectionModel()},
+                // {selector => string.Equals(selector, Ofsteaser, StringComparison.OrdinalIgnoreCase), () => new CmOfsTeaserModel()},
+                // {selector => string.Equals(selector, Augmentedcategory, StringComparison.OrdinalIgnoreCase), () => new AugmentedCategoryModel()},
+                // {selector => string.Equals(selector, Picture, StringComparison.OrdinalIgnoreCase), () => new CmPictureModel()},
+                { _ => true, () => UnknownCmComponentModel.Instance },
             };
     }
 }

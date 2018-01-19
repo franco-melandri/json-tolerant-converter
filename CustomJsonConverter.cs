@@ -1,6 +1,7 @@
 using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Linq;
 
 namespace TolerantConverter
 {
@@ -9,9 +10,10 @@ namespace TolerantConverter
         protected override CmComponentModel Create(Type objectType, JObject jObject)
         {
             var key = jObject["type"].Value<string>();
-            return CmConstants.ModelsDictionary.ContainsKey(key)
-                ? CmConstants.ModelsDictionary[key]()
-                : UnknownCmComponentModel.Instance;
+            return CmConstants
+                    .ModelsDictionary
+                    .FirstOrDefault(item => item.Key(key))
+                    .Value();
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
@@ -36,13 +38,9 @@ namespace TolerantConverter
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            // Load JObject from stream
             var jObject = JObject.Load(reader);
-
-            // Create target object based on JObject
             var target = Create(objectType, jObject);
 
-            // Populate the object properties
             serializer.Populate(jObject.CreateReader(), target);
 
             return target;
